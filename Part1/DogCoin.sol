@@ -4,6 +4,10 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
+/*
+ERC20 with list of all holders 
+*/
+
 contract DogCoin is ERC20 {
 
     address[] public holders;
