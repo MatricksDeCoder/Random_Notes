@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0
-
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v4.5/contracts/token/ERC20/ERC20.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v4.5/contracts/access/Ownable.sol";
 
 /*
-ERC20 with list of all holders 
+DRAFT DRAFT DRAFT ROUGH THOUGHTS
+ERC20 with list of all holders => Simple case anyone ever received token added to list and remains in list 
 */
 
-contract DogCoin is ERC20 {
+contract DogCoin is ERC20, Ownable {
 
     address[] public holders;
     mapping(address => bool) public isHolder;
@@ -20,66 +21,38 @@ contract DogCoin is ERC20 {
     }
 
     function _addToHolders(address _address) internal {
-        if(!isHolder(_address)) { //add holder
+        if(!isHolder[_address]) { //add holder
             holders.push(msg.sender);
         }
     }
-
-    // override _mint function - for holders update 
-    function _mint(address account, uint256 amount) internal virtual override {
-        require(account != address(0), "ERC20: mint to the zero address");
-
-        _beforeTokenTransfer(address(0), account, amount);
-
-        _totalSupply += amount;
-        _balances[account] += amount;
-        _addToHolders(account); // adjustment for holders 
-        emit Transfer(address(0), account, amount);
-
-        _afterTokenTransfer(address(0), account, amount);
+    function mint(address account, uint256 amount) external onlyOwner {
+        _addToHolders(account);
+        _mint(account, amount);
     }
 
-    // overide _burn function - for holders update 
-    function _burn(address account, uint256 amount) internal virtual {
-        require(account != address(0), "ERC20: burn from the zero address");
-
-        _beforeTokenTransfer(account, address(0), amount);
-
-        uint256 accountBalance = _balances[account];
-        require(accountBalance >= amount, "ERC20: burn amount exceeds balance");
-        unchecked {
-            _balances[account] = accountBalance - amount;
-        }
-        _totalSupply -= amount;
-        _addToHolders(account); // adjustment for holders 
-
-        emit Transfer(account, address(0), amount);
-
-        _afterTokenTransfer(account, address(0), amount);
+    function burn(address account, uint256 amount) external onlyOwner {
+        _addToHolders(account);
+        _burn(account, amount);
     }
+    
+ function transfer(address to, uint256 amount) public override returns (bool) {
+        address owner = _msgSender();
+        _transfer(owner, to, amount);
+        _addToHolders(to);
+        return true;
+ }
 
-    // override _transfer function - for holders update 
-    function _transfer(
+ function transferFrom(
         address from,
         address to,
         uint256 amount
-    ) internal virtual override {
-        require(from != address(0), "ERC20: transfer from the zero address");
-        require(to != address(0), "ERC20: transfer to the zero address");
+    ) public virtual override returns (bool) {
+        address spender = _msgSender();
+        _spendAllowance(from, spender, amount);
+        _transfer(from, to, amount);
+        _addToHolders(to);
+        return true;
+  }
 
-        _beforeTokenTransfer(from, to, amount);
-
-        uint256 fromBalance = _balances[from];
-        require(fromBalance >= amount, "ERC20: transfer amount exceeds balance");
-        unchecked {
-            _balances[from] = fromBalance - amount;
-        }
-        _balances[to] += amount;
-        _addToHolders(_to);
-
-        emit Transfer(from, to, amount);
-
-        _afterTokenTransfer(from, to, amount);
-    }
 
 }

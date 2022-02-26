@@ -1,5 +1,15 @@
 ## Notes and Key Points 
 
+- mapping can have keys(uint,address, string, bytes, fixedsixe array)
+- mapping can have any type except(variable)
+
+- The simplest way to concatenate strings is now
+bytes.concat(bytes(s1), bytes(s2))
+
+- Calldata is the read only, non-persistent, location where external values from outside a function into a function are
+stored.
+- Calldata and Memeory appear similar but Passed in calldata values cant be modified but memory values can be modified inside functions
+
 ## ABIs 
 
 - there is no solidity onchain only EVM bytecode 
@@ -130,3 +140,19 @@ someContract.setGreeting(true, "abc", 1)
 
 ### EVM OPCodes + Gas + Various Factors and workings
 
+- JUMP takes the topmost value from the stack and moves execution to that location. 
+- The target for JUMP location must contain a JUMPDEST opcode,
+- JUMPI is exactly the same, but there must not be a “0” in the second position of the stack
+- JUMPI is conditional 
+- DUP1 duplicates the first element on the stack
+- PUSH2 is just like PUSH1 but it can push two bytes to the stack
+
+Example Gas Calculation 
+
+gas_cost = 21000: base cost
+If tx.to == null (contract creation tx):
+  gas_cost += 32000
+gas_cost += 4 * bytes_zero: gas added to base cost for every zero byte of memory data
+gas_cost += 16 * bytes_nonzero: gas added to base cost for every nonzero byte of memory data 
+
+EIP-2930 introduced an optional access list that can be included as part of a transaction. This access list allows elements to be added to the touched_addresses and touched_storage_slots access sets before execution of a transaction begins. The cost for doing so is 2400 gas for each address added to touched_addresses and 1900 gas for each (address, storage_key) pair added to touched_storage_slots. This cost is charged at the same time as intrinsic gas.
