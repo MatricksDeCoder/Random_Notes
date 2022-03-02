@@ -58,6 +58,10 @@ vs
 - abi.encodeWithSelector(bytes4 selector, ...) returns (bytes) =>  encodes from second argument and prepends the 4 byte selector
 - abi.encodeWithSignature(string signature, ...) returns (bytes) === abi.encodeWithSelector(bytes4(keccak256(signature), ...)
 
+```
+abi.encodeWithSignature("baz(uint32, boolean)", 69, true); 
+```
+
 - abi.encode("AAAA") == 0x0000000000000000000000000000000000000000000000000000000000000020
 0x0000000000000000000000000000000000000000000000000000000000000004
 0x4141414100000000000000000000000000000000000000000000000000000000

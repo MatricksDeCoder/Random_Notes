@@ -82,3 +82,18 @@ https://dev.to/ahmedmansoor012/ethereum-oracle-design-patterns-5api
 
 - Beware to use or interpret correctly multidimnentional array e.g string[][3] with dynamic parts 
 
+- restrictions on mappings
+  - Mappings can only have a data location of storage 
+  - They cannot be used as parameters or return parameters of contract functions that are publicly visible.
+  - restrictions are also true for arrays and structs that contain mappings 
+
+OpCodes
+https://www.ethervm.io/
+Stack-manipulating opcodes (POP, PUSH, DUP, SWAP)
+Arithmetic/comparison/bitwise opcodes (ADD, SUB, GT, LT, AND, OR)
+Environmental opcodes (CALLER, CALLVALUE, NUMBER)
+Memory-manipulating opcodes (MLOAD, MSTORE, MSTORE8, MSIZE)
+Storage-manipulating opcodes (SLOAD, SSTORE)
+Program counter related opcodes (JUMP, JUMPI, PC, JUMPDEST)
+Halting opcodes (STOP, RETURN, REVERT, INVALID, SELFDESTRUCT)
+

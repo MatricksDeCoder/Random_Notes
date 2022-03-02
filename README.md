@@ -1,5 +1,9 @@
 # Encode_Advanced_Solidity
 
+WARNING: Personal Notes so may not be accurate 
+WARNING: Quick notes so may not be correct
+WARNING: Most parts not revised but typed or copied during learnings, courses, bootcamps etc 
+
 Learnings 
 
 - The EVM in detail - memory / storage / opcodes / understanding bytecode

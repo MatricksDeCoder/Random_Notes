@@ -10,6 +10,17 @@ ERC20 with list of all holders => Simple case anyone ever received token added t
 When a user's balance falls to zero, remove them from the holders array
 The holders array should not contain any gaps
 Add events to indicate users being added or removed from the holders array
+
+function testRemove(uint256 _index) public {
+if (_index != 0) {
+uint256 lastIndex = holders.length - 1;
+if (lastIndex != _index) {
+holders[_index] =
+holders[lastIndex];
+}
+}
+holders.pop();
+}
 */
 
 // SPDX-License-Identifier: GPL-3.0
