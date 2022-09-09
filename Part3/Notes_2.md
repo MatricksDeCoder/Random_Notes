@@ -82,3 +82,66 @@ requests[requestID].callback(response);
 - Assignments from storage to a local storage variable also only assign a reference.
 
 - All other assignments to storage always copy. Examples for this case are assignments to state variables or to members of local variables of storage struct type, even if the local variable itself is just a reference.
+
+
+### RANDOM NOTES-> get contract bytecode web3 ABI, Storage, Memory etc 
+```
+const Web3 = require("web3");
+const provider = "YOUR_INFURA_OR_QUICKNODE_HTTP_ENDPOINT";
+const web3 = new Web3(provider);
+web3.eth.getCode(CONTRACT_ADDRESS).then(console.log);
+
+The bytes padding varies based on the underlying Solidity types. For instance, address are zero-padded on the left side, while fixed-size bytes values less than 32 bytes (like bytes4 , bytes8 , bytes20 , etc…) are zero-padded on the right side.
+
+abi.encode(“Solidity”)
+0x0000000000000000000000000000000000000000000000000000000000000020
+  0000000000000000000000000000000000000000000000000000000000000004
+  536f6c6964697479000000000000000000000000000000000000000000000000
+
+1. Offset 20 -> 32 bytes
+2. String length 
+3. utf-8 encoded string 
+
+Non standard encoding 
+- abi.encodePacked() 
+- does not follow convetion of ABI 
+
+Encoding contract calls
+- abi.encodeWithSelector(...) abi.encodeWithSelector(bytes4 selector, ...) returns (bytes memory)
+  - someContract.someFunction.selector == bytes4 selector
+  - bytes4 selector === bytes4(keccak256("transfer(address,address,uint256)"));
+- e.g address.call(abi.encodeWithSelector(SELECTOR, to, value));
+
+-abi.encodeWithSignature(string memory signature, ...) returns (bytes memory)
+=== 
+- abi.encodeWithSelector(bytes4(keccak256(bytes(signature))), ...)
+
+--- struct is decoded ABI as a tuple, enum as uint, contract as address etc
+
+Solidity compiler does not allow inmplicit conversion when some information can be lost 
+Explicit conversion e.g below
+uint256 a = 12345;
+bytes32 b = bytes32(a);
+
+-- lower number to higher number e.g uint64 to uint128 left padding occurs 
+-- higher number to lower may lose precision as higher order bits, the most on the left are discarded
+uint32 a = 0x12345678;
+uint16 b = uint16(a); // b = 0x5678
+-- with bytes its the opposite right most bytes are discarded
+bytes2 a = 0x1234;
+bytes4 b = bytes4(a); // b = 0x12340000
+-- explicit conversion allowed from e.g: M-bits = N-bytes from bytesM -> uintN
+uint32 a = 0xcafecafe;
+bytes4 b = bytes4(a); // OK
+bytes4 c = 0xbeefbeef;
+uint32 d = uint32(c); // OK'
+M>N or M<N leads to errors 
+
+Conversion from uint160 to address
+- Implicit conversion is not allowed from uint160 to address ❌
+- Explicit conversion is allowed from uint160 to address ✅
+
+STORAGE LAYOUT CONTRACT
+--solc contracts/Owner.sol --storage-layout --pretty-json 
+
+```
